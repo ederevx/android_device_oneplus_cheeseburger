@@ -39,10 +39,6 @@ PRODUCT_COPY_FILES += \
 PRODUCT_SOONG_NAMESPACES += \
     $(LOCAL_PATH)
 
-# Touch
-PRODUCT_PACKAGES += \
-    vendor.lineage.touch@1.0-service.cheeseburger
-
 # Wifi
 PRODUCT_PACKAGES += \
     CheeseburgerWifiOverlay
