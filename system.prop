@@ -1,0 +1,6 @@
+# Infinity
+ro.infinity.soc=Snapdragon 835
+ro.infinity.battery=3300 mAh
+ro.infinity.display=1080 x 1920, 60 Hz
+ro.infinity.camera=16MP + 20MP + 16MP
+ro.product.marketname=OnePlus 5
