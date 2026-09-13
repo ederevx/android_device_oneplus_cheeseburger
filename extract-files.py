@@ -59,11 +59,54 @@ def fixup_camera(ctx, file, file_path, *args, **kwargs):
     path.write_bytes(data)
 
 
+# This table needs scalar 0x7c entries rather than an i8-splat sentinel.
+def fixup_iface_scalar_sentinel(ctx, file, file_path, *args, **kwargs):
+    path = Path(file_path)
+    data = path.read_bytes()
+    input_hash = 'e3e7ce4302be252242b2ea58967c9fb9b5d6033fc551e0d64b2b337d90c13154'
+    output_hash = '6da4d769702a0916693085dd3c07e1afca9473596a7c9640f7bc7356f7a75942'
+    context_offset = 0x2FD4E
+    instruction_offset = 0x2FD5E
+    old_context = bytes.fromhex(
+        '00f5c03040f6845100f5ac700ef0aaefc7ef5c0e0aa8002e40f90d0a40f9cf0a'
+        '19d0bbf1000f16d0306c08282cd3dff8'
+    )
+    old_instruction = bytes.fromhex('c7ef5c0e')
+    new_instruction = bytes.fromhex('c7ef5c00')
+    new_context = old_context.replace(old_instruction, new_instruction)
+    current_hash = hashlib.sha256(data).hexdigest()
+    if current_hash == output_hash:
+        return
+    if current_hash != input_hash:
+        raise ValueError(
+            f'Unexpected libmmcamera2_iface_modules.so hash: {current_hash}'
+        )
+    if (
+        data.count(old_context) != 1
+        or data.find(old_context) != context_offset
+        or data.count(new_context) != 0
+    ):
+        raise ValueError('Unexpected IFACE scalar-sentinel context')
+    if data[instruction_offset:instruction_offset + len(old_instruction)] != old_instruction:
+        raise ValueError('Unexpected IFACE scalar-sentinel instruction')
+    data = (
+        data[:instruction_offset]
+        + new_instruction
+        + data[instruction_offset + len(old_instruction):]
+    )
+    if hashlib.sha256(data).hexdigest() != output_hash:
+        raise ValueError('libmmcamera2_iface_modules.so output hash mismatch')
+    path.write_bytes(data)
+
+
 blob_fixups: blob_fixups_user_type = {
     'vendor/lib/libSonyIMX350PdafLibrary.so': blob_fixup()
         .replace_needed('libstdc++.so', 'libstdc++_vendor.so'),
     'vendor/lib/hw/camera.msm8998.so': blob_fixup().call(
         fixup_camera, need_tmp_dir=False
+    ),
+    'vendor/lib/libmmcamera2_iface_modules.so': blob_fixup().call(
+        fixup_iface_scalar_sentinel, need_tmp_dir=False
     ),
 }  # fmt: skip
 
