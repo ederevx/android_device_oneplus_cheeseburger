@@ -16,9 +16,9 @@ vendor/etc/acdbdata/adsp_avs_config.acdb
 vendor/etc/firmware/tfa98xx.cnt:vendor/firmware/tfa98xx.cnt
 
 # Camera
-vendor/lib/hw/camera.msm8998.so
+vendor/lib/hw/camera.msm8998.so|9d828a2554f5f4aa6269bf8643b451d14538e72f|fec6180ff2cd771759b329d12af52db853661a8c
 vendor/lib/libSonyIMX350PdafLibrary.so
-vendor/lib/libmmcamera2_iface_modules.so
+vendor/lib/libmmcamera2_iface_modules.so|4c616e0176149aa2437180f30f224faad54b5d11|fd2c2fa7d1ad56dba1d5da2106e13bdf7ff7ec59
 vendor/lib/libmmcamera2_imglib_modules.so
 vendor/lib/libmmcamera2_mct.so
 vendor/lib/libmmcamera2_sensor_modules.so
